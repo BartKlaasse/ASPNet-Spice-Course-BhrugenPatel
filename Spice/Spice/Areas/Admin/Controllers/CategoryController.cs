@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Spice.Data;
+using Spice.Models;
 
 namespace Spice.Areas.Admin.Controllers
 {
@@ -26,10 +27,26 @@ namespace Spice.Areas.Admin.Controllers
             return View(await _db.Category.ToListAsync());
         }
 
-        // Create a new category
+        //Get method - Create a new category
         public IActionResult Create()
         {
             return View();
+        }
+
+        //Post method - Create a new category
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Add(category);
+                await _db.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            return View(category);
+
         }
     }
 }
