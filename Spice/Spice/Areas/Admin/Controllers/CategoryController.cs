@@ -66,6 +66,18 @@ namespace Spice.Areas.Admin.Controllers
         }
 
         // Post method - Edit Category
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit (Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Update(category);
+                await _db.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
 
+            }
+            return View(category);
+        }
     }
 }
