@@ -20,7 +20,6 @@ namespace Spice.Areas.Admin.Controllers
             _db = db;
         }
 
-
         //Get Categories and return all categories to the view
         public async Task<IActionResult> Index()
         {
@@ -68,7 +67,7 @@ namespace Spice.Areas.Admin.Controllers
         // Post method - Edit Category
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit (Category category)
+        public async Task<IActionResult> Edit(Category category)
         {
             if (ModelState.IsValid)
             {
@@ -100,7 +99,7 @@ namespace Spice.Areas.Admin.Controllers
         // Deze HttpPost krijgt een actionname attribuut omdat beide action methods niet dezelfde naam kunnen hebben
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed (int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var category = await _db.Category.FindAsync(id);
 
