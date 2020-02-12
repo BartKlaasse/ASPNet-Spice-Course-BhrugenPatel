@@ -20,7 +20,6 @@ namespace Spice.Models
         [Display(Name = "Category")]
         public int CategoryId { get; set; }
 
-
         [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
     }
