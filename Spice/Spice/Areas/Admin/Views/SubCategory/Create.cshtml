@@ -55,37 +55,35 @@
 
 </div>
 
-@section Scripts{
+@section Scripts{ 
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
-        function updateSubCategoryList(){
+        function updateSubCategoryList() {
             var categorySelected = document.getElementById("ddlCategoryList").value;
             $list = $('#SubCategoryList');
             $.ajax({
-                url:'/Admin/SubCategory/GetSubCategory/' + categorySelected,
+                url: '/Admin/SubCategory/GetSubCategory/' + categorySelected,
                 type: 'GET',
                 dataType: 'text',
-                succes: function(data){
+                success: function (data) {
                     results = JSON.parse(data);
                     $list.html('');
-                    $list.append('<ul class="list-group">');
-                        for (i in results){
-                        $list.append('<li class"list-group-item">' + results[i].text + '</li>');
-                        }
-                        $list.append('</ul>');
+                    $list.append(' <ul class="list-group"> ');
+                    for (i in results) {
+                        $list.append('<li class="list-group-item">' + results[i].text + '</li>');
+                    }
+                    $list.append('</ul>');
                 }
             });
         }
-
-        $(document).ready(function (){
+        $(document).ready(function () {
             updateSubCategoryList();
-            console.log("domreadty");
-        })
-
-        $("#ddlCategoryList").on('change', function (){
+        });
+        $("#ddlCategoryList").on("change", function () {
             updateSubCategoryList();
-            console.log("domchange");
         });
     </script>
+
+
 }
