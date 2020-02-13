@@ -59,13 +59,13 @@
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
-        function updateSubCategoryList() {
+        function updateSubCategoryList(){
             var categorySelected = document.getElementById("ddlCategoryList").value;
             $list = $('#SubCategoryList');
             $.ajax({
-                url: '/Admin/SubCategory/GetSubCategory/' + categorySelected,
+                url:'/Admin/SubCategory/GetSubCategory/' + categorySelected,
                 type: 'GET',
-                dataType: 'text',
+                dataType: 'text', 
                 success: function (data) {
                     results = JSON.parse(data);
                     $list.html('');
