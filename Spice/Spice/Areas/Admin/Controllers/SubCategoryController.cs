@@ -37,7 +37,7 @@ namespace Spice.Areas.Admin.Controllers
                 SubCategoryList = await _db.SubCategory.OrderBy(p => p.Name).Select(p => p.Name).Distinct().ToListAsync()
             };
 
-            return View();
+            return View(model);
         }
     }
 }
