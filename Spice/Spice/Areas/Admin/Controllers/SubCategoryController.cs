@@ -134,6 +134,57 @@ namespace Spice.Areas.Admin.Controllers
             return View(modelVM);
         }
 
+        // Get method - Details subcategory 
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var subcategory = await _db.SubCategory.Include(s => s.Category).SingleOrDefaultAsync(m => m.Id == id);
+            if (subcategory == null)
+            {
+                return NotFound();
+            }
+            return View(subcategory);
+        }
+
+        // Get method - Delete Sub Category
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var category = await _db.SubCategory.Include(s => s.Category).SingleOrDefaultAsync(m => m.Id == id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return View(category);
+        }
+
+        // Post method - delete Sub category
+        // Deze HttpPost krijgt een actionname attribuut omdat beide action methods niet dezelfde naam kunnen hebben
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var subcategory = await _db.SubCategory.FindAsync(id);
+
+            if (subcategory == null)
+            {
+                return View();
+            }
+
+            _db.SubCategory.Remove(subcategory);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
         [ActionName("GetSubCategory")]
         public async Task<IActionResult> GetSubCategory(int id)
         {
