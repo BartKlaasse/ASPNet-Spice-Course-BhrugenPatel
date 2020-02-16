@@ -56,7 +56,7 @@
 </div>
 
 @section Scripts{ 
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+ 
 
     <script>
         function updateSubCategoryList(){
@@ -85,5 +85,5 @@
         });
     </script>
 
-
+   @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
