@@ -122,11 +122,9 @@ namespace Spice.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
+                MenuItemVM.SubCategory = await _db.SubCategory.Where(s => s.CategoryId == MenuItemVM.MenuItem.CategoryId).ToListAsync();
                 return View(MenuItemVM);
             }
-
-            _db.MenuItem.Add(MenuItemVM.MenuItem);
-            await _db.SaveChangesAsync();
 
             // Image saving here
 
@@ -137,24 +135,32 @@ namespace Spice.Areas.Admin.Controllers
 
             if (files.Count > 0)
             {
-                // file has been uploaded
+                // New image has been uploaded
                 var uploads = Path.Combine(webRootPath, "images");
-                var extension = Path.GetExtension(files[0].FileName);
+                var extension_new = Path.GetExtension(files[0].FileName);
 
-                using(var filesStream = new FileStream(Path.Combine(uploads, MenuItemVM.MenuItem.Id + extension), FileMode.Create))
+                // Delete old file
+                var imagePath = Path.Combine(webRootPath, menuItemFromDb.Image.TrimStart('\\'));
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+
+                // Upload new file
+                using(var filesStream = new FileStream(Path.Combine(uploads, MenuItemVM.MenuItem.Id + extension_new), FileMode.Create))
                 {
                     files[0].CopyTo(filesStream);
                 }
 
-                menuItemFromDb.Image = @"\images\" + MenuItemVM.MenuItem.Id + extension;
+                menuItemFromDb.Image = @"\images\" + MenuItemVM.MenuItem.Id + extension_new;
             }
-            else
-            {
-                // no files have been uploaded. use default file
-                var uploads = Path.Combine(webRootPath, @"images\" + SD.DefaultFoodImage);
-                System.IO.File.Copy(uploads, webRootPath + @"\images\" + MenuItemVM.MenuItem.Id + ".png");
-                menuItemFromDb.Image = @"\images\" + MenuItemVM.MenuItem.Id + ".png";
-            }
+            menuItemFromDb.Name = MenuItemVM.MenuItem.Name;
+            menuItemFromDb.Description = MenuItemVM.MenuItem.Description;
+            menuItemFromDb.Price = MenuItemVM.MenuItem.Price;
+            menuItemFromDb.Spicyness = MenuItemVM.MenuItem.Spicyness;
+            menuItemFromDb.CategoryId = MenuItemVM.MenuItem.CategoryId;
+            menuItemFromDb.SubCategoryId = MenuItemVM.MenuItem.SubCategoryId;
+
             await _db.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
