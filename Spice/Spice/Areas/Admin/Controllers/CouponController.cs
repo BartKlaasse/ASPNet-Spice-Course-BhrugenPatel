@@ -50,6 +50,10 @@ namespace Spice.Areas.Admin.Controllers
                     }
                     coupons.Picture = p1;
                 }
+                else
+                {
+                    return View(coupons);
+                }
                 _db.Coupon.Add(coupons);
                 await _db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -101,7 +105,14 @@ namespace Spice.Areas.Admin.Controllers
                 }
                 else
                 {
-                    coupon.Picture = couponFromDb.Picture;
+                    if (couponFromDb.Picture != null)
+                    {
+                        coupon.Picture = couponFromDb.Picture;
+                    }
+                    else
+                    {
+                        return View(coupon);
+                    }
                 }
                 _db.Coupon.Update(coupon);
                 await _db.SaveChangesAsync();
@@ -124,6 +135,45 @@ namespace Spice.Areas.Admin.Controllers
             }
 
             return View(coupon);
+        }
+
+        //Get Delete
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Coupon coupon = await _db.Coupon.FirstOrDefaultAsync(c => c.Id == id);
+            if (coupon == null)
+            {
+                return NotFound();
+            }
+
+            return View(coupon);
+        }
+
+        // Post delete
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Coupon coupon = await _db.Coupon.FirstOrDefaultAsync(c => c.Id == id);
+
+            if (coupon == null)
+            {
+                return NotFound();
+            }
+
+            _db.Coupon.Remove(coupon);
+            await _db.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
