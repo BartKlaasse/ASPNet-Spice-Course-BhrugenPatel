@@ -35,12 +35,12 @@
 <br/>
 <div class="backgroundWhite container">
     <ul id="menu-filters" class="menu-filter-list list-inline text-center">
-        <li class="filter active btn btn-secondary ml-1 mr-1" data-filter="menu-restaurant">
+        <li class="filter active btn btn-secondary ml-1 mr-1" data-filter=".menu-restaurant">
             Show All
         </li>
         @foreach (var item in Model.Category)
         {
-        <li class="ml-1 mr-1" data-filter="@item.Name.Replace(" ",string.Empty)">
+        <li class="ml-1 mr-1" data-filter=".@item.Name.Replace(" ",string.Empty)">
             @item.Name
         </li>            
         }
@@ -52,3 +52,22 @@
         </div>
     }
 </div>
+
+@section Scripts{
+    <script>
+        var posts = $('.post');
+        (function ($){
+            $("#menu-filters li").click(function (){
+                $("#menu-filters li").removeClass('active btn btn-secondary');
+                $(this).addClass('active btn btn-secondary');
+
+                var selectedFilter =  $(this).data("filter");
+                $(".menu-restaurant").fadeOut();
+
+                setTimeout(function (){
+                    $(selectedFilter).slideDown();
+                },300);
+            });
+        })(jQuery);
+    </script>
+}
