@@ -63,8 +63,9 @@ namespace Spice.Areas.Identity.Pages.Account
 
             [Required]
             public string Name { get; set; }
-            public string StreedAdress { get; set; }
+            public string StreetAdress { get; set; }
             public string PhoneNumber { get; set; }
+            public string City { get; set; }
             public string State { get; set; }
             public string PostalCode { get; set; }
         }
