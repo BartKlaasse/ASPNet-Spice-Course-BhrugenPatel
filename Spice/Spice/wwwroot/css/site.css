@@ -18,7 +18,8 @@ a {
   border-color: #1861ac;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
@@ -43,7 +44,7 @@ html {
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
 }
 
 button.accept-policy {
@@ -70,30 +71,49 @@ body {
   line-height: 60px; /* Vertically center the text there */
 }
 
-
-.search-background{
-    background : url('/images/dust_scratches.png')
+.search-background {
+  background: url("/images/dust_scratches.png");
 }
 
-
-.backgroundWhite{
-    background-color:white;
-    padding: 30px;
-    border-radius : 10px;
-    margin-bottom : 30px;
+.backgroundWhite {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  margin-bottom: 30px;
 }
 
 .backgroundWhiteBorder {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    border: 1px solid #ddd;
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  border: 1px solid #ddd;
 }
 
 .backgroundWhiteBorder10Padding {
-    background-color: white;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.menu-filter-list li {
+  display: inline-block;
+  cursor: pointer;
+  padding: 10px 20px 10px;
+  text-transform: uppercase;
+  background: #f5f5f5;
+  font-weight: 700;
+  font-size: 13px;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  font-family: "Poppings", sans-serif;
+}
+
+.menu-filter-list li.is-checked,
+.menu-filter-list li:hover {
+  background-color: #545b62;
+  color: #fff;
 }
