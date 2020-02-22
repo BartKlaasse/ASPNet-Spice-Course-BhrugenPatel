@@ -135,7 +135,6 @@ namespace Spice.Areas.Identity.Pages.Account
                             if (role == SD.ManagerUser)
                             {
                                 await _userManager.AddToRoleAsync(user, SD.ManagerUser);
-                                await _signInManager.SignInAsync(user, isPersistent : false);
                             }
                             else
                             {
