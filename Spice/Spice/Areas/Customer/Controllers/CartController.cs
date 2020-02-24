@@ -109,6 +109,64 @@ namespace Spice.Areas.Customer.Controllers
             return View(detailsCart);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionNameAttribute("Summary")]
+        public async Task<IActionResult> SummaryPost()
+        {
+            //OrderDetailsCart object is al gebind aan alle methods binnnen deze controller
+            var claimsIdentity = (ClaimsIdentity) User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            detailsCart.ListCart = await _db.ShoppingCart.Where(c => c.ApplicationUserId == claim.Value).ToListAsync();
+            detailsCart.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
+            detailsCart.OrderHeader.OrderDate = DateTime.Now;
+            detailsCart.OrderHeader.UserId = claim.Value;
+            detailsCart.OrderHeader.Status = SD.PaymentStatusPending;
+            // in Model word pickupdate niet gemapped naar db, daarom word ie hier toegevoegd aan pickup time
+            detailsCart.OrderHeader.PickupTime = Convert.ToDateTime(detailsCart.OrderHeader.PickupDate.ToShortDateString() + " " + detailsCart.OrderHeader.PickupTime);
+
+            List<OrderDetails> orderDetailsList = new List<OrderDetails>();
+            // Orderheader word hier al aangemaakt omdat we daar straks het id van nodig hebben
+            _db.OrderHeader.Add(detailsCart.OrderHeader);
+            await _db.SaveChangesAsync();
+
+            detailsCart.OrderHeader.OrderTotal = 0;
+
+            foreach (var item in detailsCart.ListCart)
+            {
+                item.MenuItem = await _db.MenuItem.FirstOrDefaultAsync(m => m.Id == item.MenuItemId);
+                OrderDetails orderDetails = new OrderDetails
+                {
+                    MenuItemId = item.MenuItemId,
+                    OrderId = detailsCart.OrderHeader.Id,
+                    Description = item.MenuItem.Description,
+                    Name = item.MenuItem.Name,
+                    Price = item.MenuItem.Price,
+                    Count = item.Count
+                };
+                detailsCart.OrderHeader.OrderTotalOriginal += orderDetails.Count * orderDetails.Price;
+                _db.OrderDetails.Add(orderDetails);
+            }
+
+            if (HttpContext.Session.GetString(SD.sessionCouponCode) != null)
+            {
+                detailsCart.OrderHeader.CouponCode = HttpContext.Session.GetString(SD.sessionCouponCode);
+                var couponFromDb = await _db.Coupon.Where(c => c.Name.ToLower() == detailsCart.OrderHeader.CouponCode.ToLower()).FirstOrDefaultAsync();
+                detailsCart.OrderHeader.OrderTotal = SD.DiscountedPrice(couponFromDb, detailsCart.OrderHeader.OrderTotalOriginal);
+            }
+            else
+            {
+                detailsCart.OrderHeader.OrderTotal = detailsCart.OrderHeader.OrderTotalOriginal;
+            }
+
+            detailsCart.OrderHeader.CouponCodeDiscount = detailsCart.OrderHeader.OrderTotalOriginal - detailsCart.OrderHeader.OrderTotal;
+            _db.ShoppingCart.RemoveRange(detailsCart.ListCart);
+            HttpContext.Session.SetInt32(SD.sessionShoppingCartCount, 0);
+            await _db.SaveChangesAsync();
+            return RedirectToAction("Confirm", "Order", new { id = detailsCart.OrderHeader.Id });
+        }
+
         public IActionResult AddCoupon()
         {
             if (detailsCart.OrderHeader.CouponCode == null)
