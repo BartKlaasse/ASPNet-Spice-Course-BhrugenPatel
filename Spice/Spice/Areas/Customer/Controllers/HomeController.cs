@@ -45,8 +45,8 @@ namespace Spice.Controllers
             ShoppingCart cartObj = new ShoppingCart()
             {
                 MenuItem = menuItemFromDb,
-                    MenuItemId = menuItemFromDb.Id
-            }
+                MenuItemId = menuItemFromDb.Id
+            };
 
             return View(cartObj);
         }
