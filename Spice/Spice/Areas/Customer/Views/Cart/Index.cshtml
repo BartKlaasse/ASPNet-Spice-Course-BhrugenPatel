@@ -21,6 +21,43 @@
                             <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-outline-info btn-sm">Continue Shopping</a>
                         </div>
                     </div>
+                    <div class="card-body">
+                        @foreach(var item in Model.ListCart)
+                        {
+                        <div class="row">
+                            <div class="d-none d-lg-block col-lg-2 text-center py-2">
+                                <img src="@item.MenuItem.Image" class="rounded" width="120px" height="80px">
+                            </div>
+                            <div class="col-12 text-sm-center col-lg-5 text-lg-left">
+                                <h4><strong>@item.MenuItem.Name</strong></h4>
+                                <h4><small>@item.MenuItem.Description</small></h4>
+                            </div>
+                            <div class="col-12 text-sm-center col-lg-5 text-lg-righ row">
+                                <div class="col-4 text-md-right" style="padding-top:5px;">
+                                    <h6><strong>$@item.MenuItem.Price<span class="text-muted">X</span>@item.Count</strong></h6>
+                                </div>
+                                <div class="col-6 col-sm-4 col-lg-6">
+                                    <div class="float-right mx-1">
+                                        <button type="submit" class="btn btn-primary" asp-action="plus" asp-route-cartId="@item.Id">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="float-right mx-1">
+                                        <button type="submit" class="btn btn-danger" asp-action="minus" asp-route-cartId="@item.Id">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-2 col-sm-4 col-lg-2 text-right">
+                                        <button type="submit" class="btn btn-outline-danger" asp-action="remove" asp-route-cartId="@item.Id">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
