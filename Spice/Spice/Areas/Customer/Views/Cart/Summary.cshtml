@@ -49,7 +49,7 @@
                                         <label>Date</label>
                                     </div>
                                     <div class="col-9">
-                                        <input asp-for="@Model.OrderHeader.PickupDate" id="datepicker" type="text" class="form-control" />
+                                        <input asp-for="@Model.OrderHeader.PickupDate" id="datepicker" value="" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -57,7 +57,7 @@
                                         <label>Time</label>
                                     </div>
                                     <div class="col-9">
-                                        <input asp-for="@Model.OrderHeader.PickupTime" id="timepicker" type="text" class="form-control" />
+                                        <input asp-for="@Model.OrderHeader.PickupTime" id="timepicker" value="" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -97,8 +97,8 @@
                                             </li>
                                         }
                                             <li class="list-group-item d-flex justify-content-between bg-light">
-                                                    <small class="text-muted">Total order amount</small>
-                                                <span class="text-info">$@Model.OrderHeader.OrderTotal</span>
+                                                    <small class="text-success">Total order amount</small>
+                                                <strong class="text-info">$@Model.OrderHeader.OrderTotal</strong>
                                             </li>                                        
                                     </ul>
                             </div>
@@ -121,16 +121,10 @@
 
 @section Scripts {
     <script>
-        $(function () {
-            var couponCode = document.getElementById("txtCouponCode").value;
-            if (couponCode.length > 0) {
-                document.getElementById('btnAddCoupon').style.display = 'none';
-                document.getElementById('btnRemoveCoupon').style.display = '';
-            } else {
-                document.getElementById('btnAddCoupon').style.display = '';
-                document.getElementById('btnRemoveCoupon').style.display = 'none';
-            }
+  $(function (){
+      $("#datepicker").datepicker({ minDate: 0, maxDate: "+1W" };)
+  });
+  </script>
 
-        });
-    </script>
+  
 }
