@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Spice.Utility;
 
 namespace Spice.Areas.Identity.Pages.Account
 {
@@ -28,7 +29,7 @@ namespace Spice.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             // Reset cart count to 0 when logging out
-            HttpContext.Session.SetInt32("sessionCartCount", 0);
+            HttpContext.Session.SetInt32(SD.sessionShoppingCartCount, 0);
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)
