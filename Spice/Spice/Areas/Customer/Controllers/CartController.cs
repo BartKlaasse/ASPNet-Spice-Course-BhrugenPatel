@@ -164,7 +164,8 @@ namespace Spice.Areas.Customer.Controllers
             _db.ShoppingCart.RemoveRange(detailsCart.ListCart);
             HttpContext.Session.SetInt32(SD.sessionShoppingCartCount, 0);
             await _db.SaveChangesAsync();
-            return RedirectToAction("Confirm", "Order", new { id = detailsCart.OrderHeader.Id });
+            return RedirectToAction("Index", "Home");
+            // return RedirectToAction("Confirm", "Order", new { id = detailsCart.OrderHeader.Id });
         }
 
         public IActionResult AddCoupon()
