@@ -33,7 +33,7 @@
                                         <label>Name</label>
                                     </div>
                                     <div class="col-9">
-                                        <input asp-for="@Model.OrderHeader.PickupName" type="text" class="form-control" />
+                                        <input asp-for="@Model.OrderHeader.PickupName" id="txtName" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -41,7 +41,7 @@
                                         <label>Phone number</label>
                                     </div>
                                     <div class="col-9">
-                                        <input asp-for="@Model.OrderHeader.PickupPhoneNumber" type="text" class="form-control" />
+                                        <input asp-for="@Model.OrderHeader.PickupPhoneNumber" id="txtPhone" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -70,44 +70,48 @@
                                 </div>
                             </div>
                             <div class="col-12 col-lg-5 offset-lg-1">
-                                    <h4 class="d-flex justify-content-between align-items-center mb-3">
-                                        <span class="text-info">Order Summary:</span>
-                                    </h4>
-                                    <ul class="list-group mb-3">
-                                        @{ var total = 0.0; }
-                                        @foreach ( var details in Model.ListCart)
+                                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-info">Order Summary:</span>
+                                </h4>
+                                <ul class="list-group mb-3">
+                                    @{ var total = 0.0; }
+                                    @foreach ( var details in Model.ListCart)
                                         {
-                                            <li class="list-group-item d-flex justify-content-between">
-                                                <div>
-                                                    <h6 class="my-o">@details.MenuItem.Name</h6>
-                                                    <small class="text-muted">Quantity: @details.Count</small>
-                                                </div>
-                                                <span class="text-muted">$@(details.MenuItem.Price * details.Count)</span>
-                                                @{ total += (details.MenuItem.Price * details.Count); }
-                                            </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <div>
+                                            <h6 class="my-o">@details.MenuItem.Name</h6>
+                                            <small class="text-muted">Quantity: @details.Count</small>
+                                        </div>
+                                        <span class="text-muted">$@(details.MenuItem.Price * details.Count)</span>
+                                        @{ total += (details.MenuItem.Price * details.Count); }
+                                    </li>
                                         }
-                                        @if(Model.OrderHeader.CouponCode != null)
+                                    @if(Model.OrderHeader.CouponCode != null)
                                         {
-                                            <li class="list-group-item d-flex justify-content-between">
-                                                <div class="text-success">
-                                                    <h6 class="my-o">Coupon Code</h6>
-                                                    <small class="text-muted">@Model.OrderHeader.CouponCode</small>
-                                                </div>
-                                                <span class="text-success">-$@(total - Model.OrderHeader.OrderTotal)</span>
-                                            </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <div class="text-success">
+                                            <h6 class="my-o">Coupon Code</h6>
+                                            <small class="text-muted">@Model.OrderHeader.CouponCode</small>
+                                        </div>
+                                        <span class="text-success">-$@(total - Model.OrderHeader.OrderTotal)</span>
+                                    </li>
                                         }
-                                            <li class="list-group-item d-flex justify-content-between bg-light">
-                                                    <small class="text-success">Total order amount</small>
-                                                <strong class="text-info">$@Model.OrderHeader.OrderTotal</strong>
-                                            </li>                                        
-                                    </ul>
+                                    <li class="list-group-item d-flex justify-content-between bg-light">
+                                        <small class="text-success">Total order amount</small>
+                                        <strong class="text-info">$@Model.OrderHeader.OrderTotal</strong>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
 
                     </div>
                 </div>
                 <div class="card-footer">
-
+                    <div class="row">
+                        <div class="col-12 col-md-4 offset-md-8">
+                            <button type="submit" id="btnPlaceOrder" onclick="validateInput()" value="Place Order" class="btn btn-success form-control">Place Order</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -122,49 +126,81 @@
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.js"></script>
     <script>
-  $(function (){
-      var minDt = 0;
-      if(getTimeFromCurrentDate >= 20){
-          minDt = 1;
-      }
-      $('#datepicker').datepicker({ minDate: minDt, maxDate: "+1W" });
-      $('#timepicker').timepicker({ 'minTime': '11:00 AM', 'maxTime': '9:00 PM', step:'30' });
-  }); 
+        $(function () {
+            var minDt = 0;
+            if (getTimeFromCurrentDate >= 20) {
+                minDt = 1;
+            }
+            $('#datepicker').datepicker({ minDate: minDt, maxDate: "+1W" });
+            $('#timepicker').timepicker({ 'minTime': '11:00 AM', 'maxTime': '9:00 PM', step: '30' });
+        });
 
-  function setPickupTime() {
-      var dateSelected = document.getElementById("datepicker").value;
-      var dt = new Date(dateSelected);
-      var today = new Date();
+        function setPickupTime() {
+            var dateSelected = document.getElementById("datepicker").value;
+            var dt = new Date(dateSelected);
+            var today = new Date();
 
-      dt.setHours(0,0,0,0);
-      if(dt > today){
-          selectedTime = '11:00am'
-      }else{
-          selectedTime = getTimeFromCurrentDate();
-      }
+            dt.setHours(0, 0, 0, 0);
+            if (dt > today) {
+                selectedTime = '11:00am'
+            } else {
+                selectedTime = getTimeFromCurrentDate();
+            }
 
-      $('#timepicker').timepicker('option','minTime',selectedTime);
-  }
-
-  function getTimeFromCurrentDate(){
-      var curDt = new Date();
-      var minTime = "";
-      if(curDt.getHours < 11){
-          minTime = '12:00pm'
-      }else{
-        if(curDt.getMinutes() < 30){
-            minTime = (curDt.getHours() + 1).toString()+ ':30pm'
-        }else{
-            minTime = (curDt.getHours() + 2).toString()+ ':00pm'
+            $('#timepicker').timepicker('option', 'minTime', selectedTime);
         }
-      }
-      return minTime;
-  }
 
-  $('#datepicker').change(function (){
-      setPickupTime();
-  });
-  </script>
+        function getTimeFromCurrentDate() {
+            var curDt = new Date();
+            var minTime = "";
+            if (curDt.getHours < 11) {
+                minTime = '12:00pm'
+            } else {
+                if (curDt.getMinutes() < 30) {
+                    minTime = (curDt.getHours() + 1).toString() + ':30pm'
+                } else {
+                    minTime = (curDt.getHours() + 2).toString() + ':00pm'
+                }
+            }
+            return minTime;
+        }
 
-  
+        $('#datepicker').change(function () {
+            setPickupTime();
+        });
+
+        function validateInput() {
+            var time = document.getElementById("timepicker").value;
+            var dt = document.getElementById("datepicker").value;
+            var name = document.getElementById("txtName").value;
+            var phone = document.getElementById("txtPhone").value;
+            if (time.toString() == '') {
+                alert("Please select pickup time");
+                return false;
+            }
+            else {
+                if (dt.toString() == '') {
+                    alert("Please select pickup date");
+                    return false;
+                }
+                else {
+                    if (name.toString() == '') {
+                        alert("Please enter a name");
+                        return false;
+                    }
+                    else {
+                        if (phone.toString() == '') {
+                            alert("Please enter a phonenumber");
+                            return false;
+                        }
+                        else {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+
 }
