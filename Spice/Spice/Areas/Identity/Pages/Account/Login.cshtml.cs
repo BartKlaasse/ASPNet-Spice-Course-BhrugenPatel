@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Spice.Data;
+using Spice.Models;
 
 namespace Spice.Areas.Identity.Pages.Account
 {
@@ -21,16 +26,18 @@ namespace Spice.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly IEmailSender _emailSender;
-
-        public LoginModel(SignInManager<IdentityUser> signInManager, 
+        private readonly ApplicationDbContext _db;
+        public LoginModel(SignInManager<IdentityUser> signInManager,
             ILogger<LoginModel> logger,
             UserManager<IdentityUser> userManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
+            _db = db;
         }
 
         [BindProperty]
@@ -82,9 +89,16 @@ namespace Spice.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure : true);
                 if (result.Succeeded)
                 {
+                    // Userobject ophalen
+                    var user = await _db.Users.Where(u => u.Email == Input.Email).FirstOrDefaultAsync();
+                    // Shoppingcart ophalen voor user object
+                    List<ShoppingCart> listShoppingCart = await _db.ShoppingCart.Where(u => u.ApplicationUserId == user.Id).ToListAsync();
+                    // Add cart count to session
+                    HttpContext.Session.SetInt32("sessionCartCount", listShoppingCart.Count);
+
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
@@ -125,9 +139,9 @@ namespace Spice.Areas.Identity.Pages.Account
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Page(
                 "/Account/ConfirmEmail",
-                pageHandler: null,
-                values: new { userId = userId, code = code },
-                protocol: Request.Scheme);
+                pageHandler : null,
+                values : new { userId = userId, code = code },
+                protocol : Request.Scheme);
             await _emailSender.SendEmailAsync(
                 Input.Email,
                 "Confirm your email",
