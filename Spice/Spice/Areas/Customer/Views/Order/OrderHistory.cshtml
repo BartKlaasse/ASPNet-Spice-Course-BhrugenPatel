@@ -49,7 +49,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="myModel" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog-centered modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header bg-success justify-context-center text-light">
@@ -64,3 +64,32 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        var PostBackUrl = '/Customer/Order/GetOrderDetails';
+
+        $(function (){
+            $(".anchorDetail").click(function (){
+                var $buttonClicked = $(this);
+                var id = $buttonClicked.attr('data-id');
+
+                $.ajax({
+                    type: "GET",
+                    url: PostBackUrl,
+                    contentType: "application/json; charset=utf-8",
+                    data: {"Id": id},
+                    cache: false,
+                    datatype: "json",
+                    success: function (data){
+                        $('#myModalContent').html(data);
+                        $('#myModal').modal('show');
+                    },
+                    error: function (){
+                        alert("Dynamic content load failed");
+                    }
+                })
+            })
+        })
+    </script>
+}
