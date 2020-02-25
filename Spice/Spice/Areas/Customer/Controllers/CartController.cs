@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +12,7 @@ using Spice.Data;
 using Spice.Models;
 using Spice.Models.ViewModels;
 using Spice.Utility;
+using Stripe;
 
 namespace Spice.Areas.Customer.Controllers
 {
@@ -112,7 +114,7 @@ namespace Spice.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionNameAttribute("Summary")]
-        public async Task<IActionResult> SummaryPost()
+        public async Task<IActionResult> SummaryPost(string StripeToken)
         {
             //OrderDetailsCart object is al gebind aan alle methods binnnen deze controller
             var claimsIdentity = (ClaimsIdentity) User.Identity;
@@ -124,7 +126,7 @@ namespace Spice.Areas.Customer.Controllers
             detailsCart.OrderHeader.UserId = claim.Value;
             detailsCart.OrderHeader.Status = SD.PaymentStatusPending;
             // in Model word pickupdate niet gemapped naar db, daarom word ie hier toegevoegd aan pickup time
-            detailsCart.OrderHeader.PickupTime = Convert.ToDateTime(detailsCart.OrderHeader.PickupDate.ToShortDateString() + " " + detailsCart.OrderHeader.PickupTime);
+            detailsCart.OrderHeader.PickupTime = Convert.ToDateTime(detailsCart.OrderHeader.PickupDate.ToShortDateString() + " " + detailsCart.OrderHeader.PickupTime.ToShortTimeString());
 
             List<OrderDetails> orderDetailsList = new List<OrderDetails>();
             // Orderheader word hier al aangemaakt omdat we daar straks het id van nodig hebben
@@ -163,6 +165,42 @@ namespace Spice.Areas.Customer.Controllers
             detailsCart.OrderHeader.CouponCodeDiscount = detailsCart.OrderHeader.OrderTotalOriginal - detailsCart.OrderHeader.OrderTotal;
             _db.ShoppingCart.RemoveRange(detailsCart.ListCart);
             HttpContext.Session.SetInt32(SD.sessionShoppingCartCount, 0);
+            await _db.SaveChangesAsync();
+            // Stripe transactie parameters
+            var options = new ChargeCreateOptions
+            {
+                // amount x 100 omdat bedrag van stripe in centen moet.
+                Amount = Convert.ToInt32(detailsCart.OrderHeader.OrderTotal * 100),
+                Currency = "usd",
+                Description = "Order ID: " + detailsCart.OrderHeader.Id,
+                Source = StripeToken
+            };
+            // Stripe charge object aanmaken
+            var service = new ChargeService();
+            // Stripe transactie aanmaken
+            Charge charge = service.Create(options);
+            // Indien er geen transactie id in het charge object zit dan is de betaling geweigerd
+            if (charge.BalanceTransactionId == null)
+            {
+                //Transactie geweigerd
+                detailsCart.OrderHeader.PaymentStatus = SD.PaymentStatusRejected;
+            }
+            else
+            {
+                // transactie id toevoegen aan orderheader
+                detailsCart.OrderHeader.TransactionId = charge.BalanceTransactionId;
+            }
+
+            if (charge.Status.ToLower() == "succeeded")
+            {
+                //indien de betaling gelukt is de orderheader aanpassen
+                detailsCart.OrderHeader.PaymentStatus = SD.PaymentStatusApproved;
+                detailsCart.OrderHeader.Status = SD.StatusSubmitted;
+            }
+            else
+            {
+                detailsCart.OrderHeader.PaymentStatus = SD.PaymentStatusRejected;
+            }
             await _db.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
             // return RedirectToAction("Confirm", "Order", new { id = detailsCart.OrderHeader.Id });
