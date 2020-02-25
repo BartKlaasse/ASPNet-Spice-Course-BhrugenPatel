@@ -1,4 +1,7 @@
 ﻿@model Spice.Models.ViewModels.OrderDetailsCart
+@using Microsoft.Extensions.Options
+
+@inject IOptions<Spice.Utility.StripeSettings> Stripe
 
 @{
     ViewData["Title"] = "Index Cart";
@@ -109,6 +112,20 @@
                 <div class="card-footer">
                     <div class="row">
                         <div class="col-12 col-md-4 offset-md-8">
+                            @{
+                                var OrderTotalForStripe = Model.OrderHeader.OrderTotal * 100;
+                            }
+                            <script src="//checkout.stripe.com/v2/checkout.js"
+                            class="stripe-button"
+                            data-key="@Stripe.Value.PublishableKey"
+                            data-locale="auto"
+                            data-description="Demo App"
+                            data-amount="@OrderTotalForStripe"
+                            data-allow-remember-me = "false">
+                            </script>
+                            <script>
+                                document.getElementsByClassName("stripe-button-el")[0].style.display = "none";
+                            </script>
                             <button type="submit" id="btnPlaceOrder" onclick="validateInput()" value="Place Order" class="btn btn-success form-control">Place Order</button>
                         </div>
                     </div>
