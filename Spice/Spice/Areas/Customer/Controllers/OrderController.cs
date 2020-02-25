@@ -47,7 +47,7 @@ namespace Spice.Areas.Customer.Controllers
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
             List<OrderDetailsViewModel> orderDetailsList = new List<OrderDetailsViewModel>();
-            List<OrderHeader> orderHeaderList = await _db.OrderHeader.Where(o => o.UserId == claim.Value).ToListAsync();
+            List<OrderHeader> orderHeaderList = await _db.OrderHeader.Include(o => o.ApplicationUser).Where(o => o.UserId == claim.Value).ToListAsync();
             foreach (var item in orderHeaderList)
             {
                 OrderDetailsViewModel individual = new OrderDetailsViewModel

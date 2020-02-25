@@ -26,7 +26,7 @@
                 <th>@Html.DisplayNameFor(m=>m.OrderHeader.PickupTime)</th>
                 <th>@Html.DisplayNameFor(m=>m.OrderHeader.OrderTotal)</th>
                 <th>Total Items:</th>
-                <th></th>
+                <th>Details</th>
             </tr>
             @foreach (var item in Model)
             {
@@ -37,6 +37,7 @@
                     <td>@Html.DisplayFor(m => item.OrderHeader.PickupTime)</td>
                     <td>@Html.DisplayFor(m => item.OrderHeader.OrderTotal)</td>
                     <td>@Html.DisplayFor(m => item.OrderDetails.Count)</td>
+                    <td>Detail Button</td>
                 </tr>
             }
         </table>
