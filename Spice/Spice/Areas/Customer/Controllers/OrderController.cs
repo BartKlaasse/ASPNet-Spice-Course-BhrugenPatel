@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Spice.Data;
+using Spice.Models;
 using Spice.Models.ViewModels;
 
 namespace Spice.Areas.Customer.Controllers
@@ -37,6 +38,27 @@ namespace Spice.Areas.Customer.Controllers
                 OrderDetails = await _db.OrderDetails.Where(o => o.OrderId == id).ToListAsync()
             };
             return View(OrderDetailsVM);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> OrderHistory()
+        {
+            var claimsIdentity = (ClaimsIdentity) User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            List<OrderDetailsViewModel> orderDetailsList = new List<OrderDetailsViewModel>();
+            List<OrderHeader> orderHeaderList = await _db.OrderHeader.Where(o => o.UserId == claim.Value).ToListAsync();
+            foreach (var item in orderHeaderList)
+            {
+                OrderDetailsViewModel individual = new OrderDetailsViewModel
+                {
+                    OrderHeader = item,
+                    OrderDetails = await _db.OrderDetails.Where(o => o.OrderId == item.Id).ToListAsync()
+                };
+                orderDetailsList.Add(individual);
+            }
+
+            return View(orderDetailsList);
         }
     }
 }
