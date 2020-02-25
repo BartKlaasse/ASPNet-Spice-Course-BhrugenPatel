@@ -4,13 +4,13 @@
     <div class="container row border ml-1 backgroundWhiteBorder10Padding" style="width:100;">
         <div class="col-lg-8 col-12" style="border-right:1px solid bbb9b9;">
             <br />
-            <input type="hidden" asp-for="OrderHeader.Id"/>
+            <input type="hidden" asp-for="OrderHeader.Id" />
             <div class="form-group row">
                 <div class="col-3">
                     <Label asp-for="OrderHeader.PickupName"></Label>
                 </div>
                 <div class="col-9">
-                    <input asp-for="OrderHeader.PickupName" disabled class="form-control"/>
+                    <input asp-for="OrderHeader.PickupName" disabled class="form-control" />
                 </div>
             </div>
             <div class="form-group row">
@@ -18,7 +18,7 @@
                     <Label asp-for="OrderHeader.ApplicationUser.Email"></Label>
                 </div>
                 <div class="col-9">
-                    <input asp-for="OrderHeader.ApplicationUser.Email" disabled class="form-control"/>
+                    <input asp-for="OrderHeader.ApplicationUser.Email" disabled class="form-control" />
                 </div>
             </div>
             <div class="form-group row">
@@ -26,7 +26,7 @@
                     <Label asp-for="OrderHeader.ApplicationUser.PhoneNumber"></Label>
                 </div>
                 <div class="col-9">
-                    <input asp-for="OrderHeader.ApplicationUser.PhoneNumber" disabled class="form-control"/>
+                    <input asp-for="OrderHeader.ApplicationUser.PhoneNumber" disabled class="form-control" />
                 </div>
             </div>
             <div class="form-group row">
@@ -34,7 +34,7 @@
                     <Label asp-for="OrderHeader.OrderTotal"></Label>
                 </div>
                 <div class="col-9">
-                    <input asp-for="OrderHeader.OrderTotal" disabled class="form-control"/>
+                    <input asp-for="OrderHeader.OrderTotal" disabled class="form-control" />
                 </div>
             </div>
             <div class="form-group row">
@@ -42,17 +42,19 @@
                     <Label asp-for="OrderHeader.OrderDate"></Label>
                 </div>
                 <div class="col-9">
-                    <input value="@Model.OrderHeader.PickupDate.ToShortDateString() @Model.OrderHeader.PickupDate.ToShortTimeString()" disabled class="form-control"/>
+                    <input
+                        value="@Model.OrderHeader.PickupDate.ToShortDateString() @Model.OrderHeader.PickupDate.ToShortTimeString()"
+                        disabled class="form-control" />
                 </div>
-            </div>      
+            </div>
             <div class="form-group row">
                 <div class="col-3">
                     <Label asp-for="OrderHeader.Comments"></Label>
                 </div>
                 <div class="col-9">
-                    <input asp-for="OrderHeader.Comments" disabled class="form-control"/>
+                    <input asp-for="OrderHeader.Comments" disabled class="form-control" />
                 </div>
-            </div>                  
+            </div>
         </div>
 
         <div class="col-lg-4 col-12">
@@ -64,24 +66,24 @@
                 @{ var total = 0.0;}
                 @foreach (var details in Model.OrderDetails)
                 {
-                    <li class="list-group-item d-flex justify-content-between">
-                        <div>
-                            <h6 class="my-0">@details.Name</h6>
-                            <small class="text-muted">Quantity: @details.Count</small>
-                        </div>
-                        <span class="text-muted">$ @(details.Price * details.Count)</span>
-                        @{total += (details.Price * details.Count);}
-                    </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                        <h6 class="my-0">@details.Name</h6>
+                        <small class="text-muted">Quantity: @details.Count</small>
+                    </div>
+                    <span class="text-muted">$ @(details.Price * details.Count)</span>
+                    @{total += (details.Price * details.Count);}
+                </li>
                 }
                 @if(Model.OrderHeader.CouponCode != null)
                 {
-                    <li class="list-group-item d-flex justify-content-between">
-                        <div class="text-success">
-                            <h6 class="my-0">Promo code</h6>
-                            <small>@Model.OrderHeader.CouponCode</small>
-                        </div>
-                        <span class="text-success">- $ @(total - Model.OrderHeader.OrderTotal)</span>
-                    </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <div class="text-success">
+                        <h6 class="my-0">Promo code</h6>
+                        <small>@Model.OrderHeader.CouponCode</small>
+                    </div>
+                    <span class="text-success">- $ @(total - Model.OrderHeader.OrderTotal)</span>
+                </li>
                 }
                 <li class="list-group-item d-flex justify-content-between bg-light">
                     <span class="text-info">Total amount: </span>
