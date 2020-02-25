@@ -1,0 +1,29 @@
+@model Spice.Models.ViewModels.OrderDetailsViewModel
+@{
+    ViewData["Title"] = "Order Confirmed";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br/>
+<div class="backgroundWhite">
+    <div class="row px-3">
+        <div class="col-8">
+            <h2 class="text-info">Order Confirmed</h2>
+        </div>
+        <div class="col-4 text-right">
+            <a asp-action="Index" asp-controller="Home" class="btn btn-success form-control">New Order</a>
+        </div>
+    </div>
+
+
+@if(Model.OrderHeader != null)
+{
+    <div class="p-3" style="color:maroon;">
+        Your order has been confirmed<br/>See the summary below.
+    </div>
+}
+else
+{
+    <div class="text-danger">Error please try again</div>
+}
+</div>
