@@ -8,14 +8,18 @@ namespace Spice.Utility
 {
     public static class SD
     {
+        // Roles
         public const string DefaultFoodImage = "default_food.png";
         public const string ManagerUser = "Manager";
         public const string KitchenUser = "Kitchen";
         public const string FrontDeskUser = "FrontDesk";
         public const string CustomerEndUser = "Customer";
 
+        //Sessions
         public const string sessionShoppingCartCount = "sessionCartCount";
         public const string sessionCouponCode = "sessionCouponCode";
+
+        // Order & Payment status
         public const string StatusSubmitted = "Submitted";
         public const string StatusInProcess = "Being Prepared.";
         public const string StatusReady = "Ready for pickup";
@@ -24,6 +28,12 @@ namespace Spice.Utility
         public const string PaymentStatusPending = "Pending";
         public const string PaymentStatusApproved = "Approved";
         public const string PaymentStatusRejected = "Rejected";
+
+        // Order status images
+        public const string ImageOrderPlaced = "/images/OrderPlaced.png";
+        public const string ImageOrderInKitchen = "/images/InKitchen.png";
+        public const string ImageOrderReadyForPickup = "/images/ReadyForPickup.png";
+        public const string ImageOrderCompleted = "/images/Completed.png";
 
         public static string ConvertToRawHtml(string source)
         {

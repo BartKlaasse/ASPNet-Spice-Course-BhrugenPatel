@@ -1,0 +1,27 @@
+@model Spice.Models.ViewModels.OrderDetailsViewModel
+@using Spice.Utility
+<div class="card">
+  <div class="card-header">
+    Order Status
+  </div>
+  <div class="card-body">
+      @if(Model.OrderHeader.Status == SD.StatusSubmitted)
+      {
+          <img src="@SD.ImageOrderPlaced" class="container"/>
+      }
+            @if(Model.OrderHeader.Status == SD.StatusInProcess)
+      {
+          <img src="@SD.ImageOrderInKitchen"/>
+      }
+            @if(Model.OrderHeader.Status == SD.StatusReady)
+      {
+          <img src="@SD.ImageOrderReadyForPickup"/>
+      }
+            @if(Model.OrderHeader.Status == SD.StatusCompleted)
+      {
+          <img src="@SD.ImageOrderCompleted"/>
+      }
+  </div>
+</div>
+
+

@@ -41,7 +41,7 @@
                     <td>@Html.DisplayFor(m => item.OrderDetails.Count)</td>
                     <td><button type="submit" class="btn btn-success anchorDetail" data-id="@item.OrderHeader.Id" data-toggle="modal"><i class="far fa-list-alt"></i> Details</button></td>
                     @if(item.OrderHeader.Status != SD.StatusCancelled){
-                    <td><button type="submit" class="btn btn-primary anchorDetail" data-id="@item.OrderHeader.Id" data-toggle="modal"><i class="far fa-list-alt"></i> Status</button></td>
+                    <td><button type="submit" class="btn btn-primary anchorStatus" data-id="@item.OrderHeader.Id" data-toggle="modal"><i class="far fa-list-alt"></i> Status</button></td>
                     }
                     else
                     {
@@ -81,7 +81,8 @@
 
 @section Scripts{
     <script>
-        var PostBackUrl = '/Customer/Order/GetOrderDetails';
+        var PostBackUrlDetails = '/Customer/Order/GetOrderDetails';
+        var PostBackUrlStatus = '/Customer/Order/GetOrderStatus';
 
         $(function (){
             $(".anchorDetail").click(function (){
@@ -90,7 +91,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: PostBackUrl,
+                    url: PostBackUrlDetails,
                     contentType: "application/json; charset=utf-8",
                     data: {"Id": id},
                     cache: false,
@@ -105,5 +106,29 @@
                 })
             })
         })
+
+        $(function (){
+            $(".anchorStatus").click(function (){
+                var $buttonClicked = $(this);
+                var id = $buttonClicked.attr('data-id');
+
+                $.ajax({
+                    type: "GET",
+                    url: PostBackUrlStatus,
+                    contentType: "application/json; charset=utf-8",
+                    data: {"Id": id},
+                    cache: false,
+                    datatype: "json",
+                    success: function (data){
+                        $('#myModalContent').html(data);
+                        $('#myModal').modal('show');
+                    },
+                    error: function (){
+                        alert("Dynamic content load failed");
+                    }
+                })
+            })
+        })
+                
     </script>
 }
