@@ -148,7 +148,7 @@ namespace Spice.Areas.Customer.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> OrderPickup(int productPage = 1)
+        public async Task<IActionResult> OrderPickup(int productPage = 1, string searchEmail = null, string searchName = null, string searchPhone = null)
         {
             // var claimsIdentity = (ClaimsIdentity) User.Identity;
             // var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
@@ -158,8 +158,52 @@ namespace Spice.Areas.Customer.Controllers
             };
             StringBuilder param = new StringBuilder();
             param.Append("/Customer/Order/OrderPickup/?productPage=:");
+            param.Append("&searchName=");
+            if (searchName != null)
+            {
+                param.Append(searchName);
+            }
+            param.Append("&searchEmail=");
+            if (searchEmail != null)
+            {
+                param.Append(searchEmail);
+            }
+            param.Append("&searchPhone=");
+            if (searchPhone != null)
+            {
+                param.Append(searchPhone);
+            }
+            List<OrderHeader> orderHeaderList = new List<OrderHeader>();
+            if (searchName != null || searchEmail != null || searchPhone != null)
+            {
+                var User = new ApplicationUser();
+                orderHeaderList = new List<OrderHeader>();
 
-            List<OrderHeader> orderHeaderList = await _db.OrderHeader.Include(o => o.ApplicationUser).Where(o => o.Status == SD.StatusReady).ToListAsync();
+                if (searchName != null)
+                {
+                    orderHeaderList = await _db.OrderHeader.Include(o => o.ApplicationUser).Where(u => u.PickupName.ToLower().Contains(searchName.ToLower())).OrderByDescending(o => o.OrderDate).ToListAsync();
+                }
+                else
+                {
+                    if (searchEmail != null)
+                    {
+                        User = await _db.ApplicationUser.Where(u => u.Email.ToLower().Contains(searchEmail.ToLower())).FirstOrDefaultAsync();
+                        orderHeaderList = await _db.OrderHeader.Include(o => o.ApplicationUser).Where(o => o.UserId == User.Id).OrderByDescending(o => o.OrderDate).ToListAsync();
+                    }
+                    else
+                    {
+                        if (searchPhone != null)
+                        {
+                            orderHeaderList = await _db.OrderHeader.Include(o => o.ApplicationUser).Where(u => u.PickupPhoneNumber.Contains(searchPhone)).OrderByDescending(o => o.OrderDate).ToListAsync();
+                        }
+                    }
+                }
+            }
+            else
+            {
+
+                orderHeaderList = await _db.OrderHeader.Include(o => o.ApplicationUser).Where(o => o.Status == SD.StatusReady).ToListAsync();
+            }
             foreach (var item in orderHeaderList)
             {
                 OrderDetailsViewModel individual = new OrderDetailsViewModel
@@ -169,6 +213,7 @@ namespace Spice.Areas.Customer.Controllers
                 };
                 orderListVM.Orders.Add(individual);
             }
+
             var count = orderListVM.Orders.Count;
             orderListVM.Orders = orderListVM.Orders.OrderByDescending(p => p.OrderHeader.Id).Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
             orderListVM.PagingInfo = new PagingInfo()
