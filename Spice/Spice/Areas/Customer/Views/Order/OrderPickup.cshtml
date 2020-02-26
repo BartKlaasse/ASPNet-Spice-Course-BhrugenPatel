@@ -5,7 +5,7 @@
     ViewData["Title"] = "Order Pickup";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<form method="post">
+<form method="get">
     <br /><br />
     <h2 class="text-info"> Orders ready for pickup</h2>
     <div class="border backgroundWhite">
@@ -76,6 +76,7 @@
             }
         </div>
     </div>
+    </form>
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog-centered modal-dialog" role="document">
             <div class="modal-content">
@@ -99,7 +100,7 @@
             </div>
         </div>
     </div>
-</form>
+
 @section Scripts{
     <script>
         var PostBackUrlDetails = '/Customer/Order/GetOrderDetails';

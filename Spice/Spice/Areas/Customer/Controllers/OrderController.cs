@@ -226,5 +226,16 @@ namespace Spice.Areas.Customer.Controllers
 
             return View(orderListVM);
         }
+
+        [Authorize(Roles = SD.ManagerUser + "," + SD.FrontDeskUser)]
+        [HttpPost]
+        [ActionName("OrderPickup")]
+        public async Task<IActionResult> OrderPickupPost(int OrderId)
+        {
+            OrderHeader orderHeader = await _db.OrderHeader.FindAsync(OrderId);
+            orderHeader.Status = SD.StatusCompleted;
+            await _db.SaveChangesAsync();
+            return RedirectToAction("OrderPickup", "Order");
+        }
     }
 }
