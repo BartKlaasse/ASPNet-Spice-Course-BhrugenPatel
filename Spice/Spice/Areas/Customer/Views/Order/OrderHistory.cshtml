@@ -1,4 +1,5 @@
 @model Spice.Models.ViewModels.OrderListViewModel
+@using Spice.Utility
 
 @{
     ViewData["Title"] = "Order History";
@@ -26,7 +27,8 @@
                 <th>@Html.DisplayNameFor(m=>m.Orders[0].OrderHeader.PickupTime)</th>
                 <th>@Html.DisplayNameFor(m=>m.Orders[0].OrderHeader.OrderTotal)</th>
                 <th>Total Items:</th>
-                <th>Details</th>
+                <th></th>
+                <th></th>
             </tr>
             @foreach (var item in Model.Orders)
             {
@@ -38,6 +40,14 @@
                     <td>@Html.DisplayFor(m => item.OrderHeader.OrderTotal)</td>
                     <td>@Html.DisplayFor(m => item.OrderDetails.Count)</td>
                     <td><button type="submit" class="btn btn-success anchorDetail" data-id="@item.OrderHeader.Id" data-toggle="modal"><i class="far fa-list-alt"></i> Details</button></td>
+                    @if(item.OrderHeader.Status != SD.StatusCancelled){
+                    <td><button type="submit" class="btn btn-primary anchorDetail" data-id="@item.OrderHeader.Id" data-toggle="modal"><i class="far fa-list-alt"></i> Status</button></td>
+                    }
+                    else
+                    {
+                    <td><button type="submit" class="btn btn-warning anchorDetail" data-id="@item.OrderHeader.Id" data-toggle="modal"><i class="far fa-list-alt"></i> Order Cancelled</button></td>
+
+                    }
                 </tr>
             }
         </table>
