@@ -93,7 +93,7 @@ namespace Spice.Areas.Customer.Controllers
                 orderDetailsVM.Add(individual);
             }
 
-            return View(orderDetailsVM.OrderBy(o => o.OrderHeader.PickupTime));
+            return View(orderDetailsVM.OrderBy(o => o.OrderHeader.PickupTime).ToList());
         }
 
         public async Task<IActionResult> GetOrderDetails(int id)
