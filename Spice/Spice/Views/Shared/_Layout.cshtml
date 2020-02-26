@@ -56,6 +56,23 @@
                                 </a>
                             </li>
                         }
+                        @if(User.IsInRole(SD.KitchenUser) || User.IsInRole(SD.ManagerUser) || User.IsInRole(SD.FrontDeskUser))
+                        {
+                        <li class="nav-item dropdown text-white-50">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Order Management
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropDownMenuLink">
+                                <a class="dropdown-item" asp-action="ManageOrder" asp-controller="Order" asp-area="Customer">Manage Order</a>
+                                @if(User.IsInRole(SD.KitchenUser) || User.IsInRole(SD.ManagerUser)){
+                                <a class="dropdown-item" asp-action="ManageOrder" asp-controller="Order" asp-area="Customer">Manage Order</a>   
+                                }
+                                @if(User.IsInRole(SD.FrontDeskUser) || User.IsInRole(SD.ManagerUser)){
+                                <a class="dropdown-item" asp-action="OrderPickup" asp-controller="Orde" asp-area="Customer">Order Pickup</a>
+                                }                                
+                            </div>
+                        </li>
+                        }                        
 
                         @if(HttpContextAccessor.HttpContext.Session.GetInt32(SD.sessionShoppingCartCount) != null)
                         {
