@@ -1,4 +1,5 @@
 @model Spice.Models.ViewModels.OrderDetailsViewModel
+@using Spice.Utility
 
 <form method="POST">
     <div class="container row border ml-1 backgroundWhiteBorder10Padding" style="width:100;">
@@ -90,7 +91,14 @@
                     <strong class="text-info">$ @Model.OrderHeader.OrderTotal</strong>
                 </li>
             </ul>
-            <button type="submit" class="btn btn-info form-control">@Model.OrderHeader.Status</button>
+            @if(Model.OrderHeader.Status.Equals(SD.StatusReady) && (User.IsInRole(SD.ManagerUser) || User.IsInRole(SD.FrontDeskUser)))
+            {
+            <button type="submit" class="btn btn-success form-control" ><i class="far fa-thumbs-up"></i>&nbsp;Confirm pickup</button>
+            }
+            else
+            {
+            <p class="btn btn-info form-control">@Model.OrderHeader.Status</p>
+            }
         </div>
     </div>
 </form>
