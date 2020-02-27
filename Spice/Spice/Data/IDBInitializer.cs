@@ -4,9 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace Spice.Data
+{
+    public interface IDBInitializer
     {
-        public interface IDBInitializer
-        {
 
-            void Initialize();
-        }
+        void Initialize();
+    }
+}
