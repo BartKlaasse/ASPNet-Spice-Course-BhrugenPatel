@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Spice.Data;
@@ -21,9 +22,11 @@ namespace Spice.Areas.Customer.Controllers
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _db;
-        public CartController(ApplicationDbContext db)
+        private readonly IEmailSender _emailSender;
+        public CartController(ApplicationDbContext db, IEmailSender emailSender)
         {
             _db = db;
+            _emailSender = emailSender;
         }
 
         [BindProperty]
@@ -197,6 +200,7 @@ namespace Spice.Areas.Customer.Controllers
                 //indien de betaling gelukt is de orderheader aanpassen
                 detailsCart.OrderHeader.PaymentStatus = SD.PaymentStatusApproved;
                 detailsCart.OrderHeader.Status = SD.StatusSubmitted;
+                await _emailSender.SendEmailAsync(_db.Users.Where(u => u.Id == claim.Value).FirstOrDefault().Email, "Spice Order Created " + detailsCart.OrderHeader.Id.ToString(), "order has been submitted successfully");
             }
             else
             {
